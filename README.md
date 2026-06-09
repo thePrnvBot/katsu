@@ -2,6 +2,8 @@
 
 A spatial browser workspace. Open URLs on a grid of viewport-sized workspaces and navigate between them via arrow keys.
 
+<img width="2557" height="1271" alt="image" src="https://github.com/user-attachments/assets/f4401db0-3ba8-454f-981b-e557b6483ad7" />
+
 ## Tech Stack
 
 - React 19, TypeScript, Vite
