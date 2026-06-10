@@ -75,11 +75,7 @@ export function CommandMenu() {
             >
               ← Back
             </button>
-<<<<<<< HEAD
-            <span className="text-xs text-white/40">Search Windows</span>
-=======
             <span className="text-xs text-white/40">Open Windows</span>
->>>>>>> 60d5999da57fc2b8cbca1e6bd760fe0f50c9ef6c
           </div>
           <Command.Input
             autoFocus
