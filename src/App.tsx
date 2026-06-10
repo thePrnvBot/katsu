@@ -3,6 +3,7 @@ import { useStore } from "./store/useStore";
 import { World } from "./components/world";
 import { Window } from "./components/window";
 import { Minimap } from "./components/minimap";
+import { SearchBar } from "./components/searchbar";
 
 export default function App() {
   const moveCell = useStore((s) => s.moveCell);
@@ -10,7 +11,7 @@ export default function App() {
   const grid = useStore((s) => s.grid);
   const windows = useStore((s) => s.windows);
   const addWindow = useStore((s) => s.addWindow);
-  const [url, setUrl] = useState("");
+  const [urlField, setUrlField] = useState("");
   const wheelAccum = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -66,40 +67,20 @@ export default function App() {
     });
   };
 
+  const openSite = () => {
+    const cleanUrl = normalizeUrl(urlField);
+    if (!cleanUrl) return;
+    openWindow(cleanUrl);
+    setUrlField("");
+  };
+
   return (
     <div className="fixed inset-0 overflow-hidden">
-      <div className="fixed left-1/2 top-2.5 z-9999 flex -translate-x-1/2 items-center gap-2 rounded-full bg-[#222] p-2">
-        <span className="select-none px-4 pr-2 text-sm font-semibold text-[#eee]">
-          Katsu
-        </span>
-
-        <input
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="Enter URL"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              const cleanUrl = normalizeUrl(url);
-              if (!cleanUrl) return;
-              openWindow(cleanUrl);
-              setUrl("");
-            }
-          }}
-          className="w-65 rounded-full border-none bg-[#333] px-4.5 py-2 text-sm text-[#eee] outline-none"
-        />
-
-        <button
-          onClick={() => {
-            const cleanUrl = normalizeUrl(url);
-            if (!cleanUrl) return;
-            openWindow(cleanUrl);
-            setUrl("");
-          }}
-          className="cursor-pointer rounded-full border-none bg-[#444] px-4 py-2 text-sm text-[#eee]"
-        >
-          Open
-        </button>
-      </div>
+      <SearchBar
+        url={urlField}
+        openSite={openSite}
+        handleChange={setUrlField}
+      />
       <World>
         {windows.map((w) => (
           <Window key={w.id} windowId={w.id} />
