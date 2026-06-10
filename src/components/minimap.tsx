@@ -33,6 +33,7 @@ export function Minimap() {
     startHideTimer();
 
     const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement).closest("[cmdk-root]")) return;
       if (
         e.key === "ArrowUp" ||
         e.key === "ArrowDown" ||
