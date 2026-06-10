@@ -92,7 +92,15 @@ export const useStore = create<State>((set, get) => ({
         return {
           windows: s.windows.map((x) =>
             x.id === id
-              ? { ...x, x: pb.x, y: pb.y, w: pb.w, h: pb.h, maximized: false, prevBounds: undefined }
+              ? {
+                  ...x,
+                  x: pb.x,
+                  y: pb.y,
+                  w: pb.w,
+                  h: pb.h,
+                  maximized: false,
+                  prevBounds: undefined,
+                }
               : x,
           ),
         };

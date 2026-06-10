@@ -13,7 +13,7 @@ export function Minimap() {
 
   return (
     <div
-      className="fixed bottom-4 right-4 z-[9999] rounded-lg border border-white/10 bg-[#111] p-2"
+      className="fixed bottom-4 right-4 z-9999 rounded-lg border border-white/10 bg-[#111] p-2"
       style={{ width: w + 16, height: h + 16 }}
     >
       <div className="relative" style={{ width: w, height: h }}>
