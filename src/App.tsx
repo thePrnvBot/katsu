@@ -11,6 +11,7 @@ export default function App() {
   const grid = useStore((s) => s.grid);
   const windows = useStore((s) => s.windows);
   const addWindow = useStore((s) => s.addWindow);
+  const setActiveWindow = useStore((s) => s.setActiveWindow);
   const [urlField, setUrlField] = useState("");
   const wheelAccum = useRef({ x: 0, y: 0 });
 
@@ -57,14 +58,16 @@ export default function App() {
   };
 
   const openWindow = (cleanUrl: string) => {
+    const newWindowId = crypto.randomUUID();
     addWindow({
-      id: crypto.randomUUID(),
+      id: newWindowId,
       x: currentCell.x * grid.cellWidth + 100 + Math.random() * 50,
       y: currentCell.y * grid.cellHeight + 100 + Math.random() * 50,
       w: 600,
       h: 400,
       url: cleanUrl,
     });
+    setActiveWindow(newWindowId);
   };
 
   const openSite = () => {
