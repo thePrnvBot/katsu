@@ -4,6 +4,7 @@ import { World } from "./components/world";
 import { Window } from "./components/window";
 import { Minimap } from "./components/minimap";
 import { SearchBar } from "./components/searchbar";
+import { CommandMenu } from "./components/kbar";
 
 export default function App() {
   const moveCell = useStore((s) => s.moveCell);
@@ -40,6 +41,7 @@ export default function App() {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return;
+      if ((e.target as HTMLElement).closest("[cmdk-root]")) return;
       if (e.key === "ArrowRight") moveCell(1, 0);
       if (e.key === "ArrowLeft") moveCell(-1, 0);
       if (e.key === "ArrowDown") moveCell(0, 1);
@@ -79,6 +81,7 @@ export default function App() {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
+      <CommandMenu />
       <SearchBar
         url={urlField}
         openSite={openSite}
