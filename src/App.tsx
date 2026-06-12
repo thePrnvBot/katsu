@@ -4,7 +4,7 @@ import { World } from "./components/world";
 import { Window } from "./components/window";
 import { Minimap } from "./components/minimap";
 import { SearchBar } from "./components/searchbar";
-import { CommandMenu } from "./components/kbar";
+import { CommandMenu } from "./components/kbar/CommandMenu";
 
 export default function App() {
   const moveCell = useStore((s) => s.moveCell);
