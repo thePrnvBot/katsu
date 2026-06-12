@@ -168,7 +168,7 @@ export const useStore = create<State>((set, get) => ({
 
   setWindowLayout: (id, layout) => {
     const grid = get().grid;
-    const bounds = resolveLayout(id, layout, grid);
+    const bounds = resolveLayout(layout, grid);
     const cx = get().currentCell.x * grid.cellWidth;
     const cy = get().currentCell.y * grid.cellHeight;
 

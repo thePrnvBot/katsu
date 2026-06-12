@@ -17,7 +17,6 @@ const getCellViewport = (grid: State["grid"]) => ({
 });
 
 export const resolveLayout = (
-  id: string,
   layout: WindowLayout,
   grid: State["grid"],
 ): Bounds => {
