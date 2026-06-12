@@ -2,7 +2,7 @@ import { Command } from "cmdk";
 import type { SubMenuProps } from "./CommandMenu";
 import { useStore } from "../../store/useStore";
 
-export function WindowsMenu({ closeMenu }: SubMenuProps) {
+export function WindowsMenu({ closeAndResetMenu }: SubMenuProps) {
   const windows = useStore((s) => s.windows);
   const centerOnWindow = useStore((s) => s.centerOnWindow);
   const setActiveWindow = useStore((s) => s.setActiveWindow);
@@ -10,7 +10,7 @@ export function WindowsMenu({ closeMenu }: SubMenuProps) {
   const goToWindow = (id: string) => {
     centerOnWindow(id);
     setActiveWindow(id);
-    closeMenu();
+    closeAndResetMenu();
   };
 
   return (

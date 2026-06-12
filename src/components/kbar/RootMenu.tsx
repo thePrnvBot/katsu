@@ -13,6 +13,12 @@ export function RootMenu({ navigateToPage }: SubMenuProps) {
       >
         Search Windows
       </Command.Item>
+      <Command.Item
+        onSelect={() => navigateToPage("layout")}
+        className="flex cursor-pointer items-center rounded-lg px-3 py-2 text-sm text-[#eee] outline-none data-[selected=true]:bg-[#333]"
+      >
+        Set Window Layout
+      </Command.Item>
     </>
   );
 }

@@ -1,4 +1,7 @@
 import { create } from "zustand";
+import { resolveLayout, type WindowLayout } from "../utils/windowLayouts";
+
+export type Bounds = { x: number; y: number; w: number; h: number };
 
 type Window = {
   id: string;
@@ -9,10 +12,10 @@ type Window = {
   z?: number;
   url: string;
   maximized?: boolean;
-  prevBounds?: { x: number; y: number; w: number; h: number };
+  prevBounds?: Bounds;
 };
 
-type State = {
+export type State = {
   windows: Window[];
   camera: { x: number; y: number };
   cameraTarget: { x: number; y: number };
@@ -31,6 +34,7 @@ type State = {
   centerOnWindow: (id: string) => void;
   bringToFront: (id: string) => void;
   removeWindow: (id: string) => void;
+  setWindowLayout: (id: string, layout: WindowLayout) => void;
 };
 
 const COLS = 10;
@@ -161,4 +165,26 @@ export const useStore = create<State>((set, get) => ({
       windows: s.windows.filter((w) => w.id !== id),
       activeWindowId: s.activeWindowId === id ? null : s.activeWindowId,
     })),
+
+  setWindowLayout: (id, layout) => {
+    const grid = get().grid;
+    const bounds = resolveLayout(id, layout, grid);
+    const cx = get().currentCell.x * grid.cellWidth;
+    const cy = get().currentCell.y * grid.cellHeight;
+
+    set((s) => ({
+      windows: s.windows.map((w) =>
+        w.id === id
+          ? {
+              ...w,
+              x: cx + bounds.x,
+              y: cy + bounds.y,
+              w: bounds.w,
+              h: bounds.h,
+              maximized: false,
+            }
+          : w,
+      ),
+    }));
+  },
 }));

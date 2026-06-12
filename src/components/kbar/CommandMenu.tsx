@@ -2,12 +2,13 @@ import { Command } from "cmdk";
 import { useEffect, useState } from "react";
 import { RootMenu } from "./RootMenu";
 import { WindowsMenu } from "./WindowsMenu";
+import { LayoutMenu } from "./LayoutMenu";
 
-type CommandPages = "root" | "windows";
+type CommandPages = "root" | "windows" | "layout";
 
 export interface SubMenuProps {
   navigateToPage: (page: CommandPages) => void;
-  closeMenu: () => void;
+  closeAndResetMenu: () => void;
 }
 
 export function CommandMenu() {
@@ -51,6 +52,11 @@ export function CommandMenu() {
     setPages(["root"]);
   };
 
+  const closeAndResetMenu = () => {
+    closeMenu();
+    resetMenu();
+  };
+
   return (
     <Command.Dialog
       open={open}
@@ -88,10 +94,22 @@ export function CommandMenu() {
       />
       <Command.List className="mt-2 max-h-64 overflow-y-auto">
         {page === "root" && (
-          <RootMenu navigateToPage={navigateToPage} closeMenu={closeMenu} />
+          <RootMenu
+            navigateToPage={navigateToPage}
+            closeAndResetMenu={closeAndResetMenu}
+          />
         )}
         {page === "windows" && (
-          <WindowsMenu navigateToPage={navigateToPage} closeMenu={closeMenu} />
+          <WindowsMenu
+            navigateToPage={navigateToPage}
+            closeAndResetMenu={closeAndResetMenu}
+          />
+        )}
+        {page == "layout" && (
+          <LayoutMenu
+            navigateToPage={navigateToPage}
+            closeAndResetMenu={closeAndResetMenu}
+          />
         )}
       </Command.List>
     </Command.Dialog>
