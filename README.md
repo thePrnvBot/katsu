@@ -19,6 +19,7 @@ bun dev
 ## Usage
 
 - **Open a URL** -- type in the input bar and press Enter or click Open
+- **Command K Bar** -- Change window layouts or search across all windows
 - **Navigate grid** -- scroll wheel or arrow keys move between cells
 - **Minimap** -- bottom-right corner shows grid position; click to jump
 - **Windows** -- drag title bar to move, bottom-right handle to resize
