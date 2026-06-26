@@ -19,7 +19,9 @@ bun dev
 ## Usage
 
 - **Open a URL** -- type in the input bar and press Enter or click Open
-- **Navigate grid** -- scroll wheel or arrow keys move between cells
+- **Navigate grid** -- scroll wheel or arrow keys to move between cells (clamped to 10x10)
+- **Command palette** -- Ctrl+K / Cmd+K to search windows or apply layout presets
+- **Window layouts** -- snap active window to halves, thirds, or quarters of the current cell via command palette
 - **Minimap** -- bottom-right corner shows grid position; click to jump
 - **Windows** -- drag title bar to move, bottom-right handle to resize
 - **Maximize** -- fills the current cell; click again to restore
