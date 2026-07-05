@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useStore } from "../store/useStore";
 
 interface WorldProps {
@@ -10,23 +10,31 @@ export function World({ children, onFileDrop }: WorldProps) {
   const camera = useStore((s) => s.camera);
   const grid = useStore((s) => s.grid);
   const [dragOver, setDragOver] = useState(false);
+  const dragCounter = useRef(0);
 
   const worldW = grid.cols * grid.cellWidth;
   const worldH = grid.rows * grid.cellHeight;
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
+    dragCounter.current++;
     setDragOver(true);
   }, []);
 
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  }, []);
+
   const handleDragLeave = useCallback((e: React.DragEvent) => {
-    if (e.currentTarget === e.target) setDragOver(false);
+    dragCounter.current--;
+    if (dragCounter.current === 0) setDragOver(false);
   }, []);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
+      dragCounter.current = 0;
       setDragOver(false);
       const files = Array.from(e.dataTransfer.files);
       if (files.length > 0) onFileDrop(files);
@@ -37,6 +45,7 @@ export function World({ children, onFileDrop }: WorldProps) {
   return (
     <div
       className="fixed inset-0 overflow-hidden bg-[#0a0a0a]"
+      onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
