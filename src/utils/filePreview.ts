@@ -102,10 +102,57 @@ function getDownloadHtml(fileName: string): string {
 </html>`;
 }
 
+function getImageWrapHtml(dataUrl: string, fileName: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>${escapeHtml(fileName)}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
+  img { display: block; width: 100%; height: 100%; object-fit: contain; }
+</style>
+</head>
+<body>
+<img src="${dataUrl}" alt="${escapeHtml(fileName)}">
+</body>
+</html>`;
+}
+
 export type FilePreviewResult = {
   url: string;
   fileName: string;
+  nativeWidth?: number;
+  nativeHeight?: number;
 };
+
+function getImageDimensions(url: string): Promise<{ w: number; h: number }> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => resolve({ w: 0, h: 0 });
+    img.src = url;
+  });
+}
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function getVideoDimensions(url: string): Promise<{ w: number; h: number }> {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+    video.onloadedmetadata = () => resolve({ w: video.videoWidth, h: video.videoHeight });
+    video.onerror = () => resolve({ w: 0, h: 0 });
+    video.src = url;
+  });
+}
 
 export async function createFilePreview(
   file: File,
@@ -120,12 +167,23 @@ export async function createFilePreview(
     return { url: URL.createObjectURL(blob), fileName };
   }
 
+  if (mimeType.startsWith("image/") || mimeType === "image/svg+xml") {
+    const dataUrl = await fileToDataUrl(file);
+    const { w, h } = await getImageDimensions(dataUrl);
+    const html = getImageWrapHtml(dataUrl, fileName);
+    const blob = new Blob([html], { type: "text/html" });
+    return { url: URL.createObjectURL(blob), fileName, nativeWidth: w || undefined, nativeHeight: h || undefined };
+  }
+
+  if (mimeType.startsWith("video/")) {
+    const url = URL.createObjectURL(file);
+    const { w, h } = await getVideoDimensions(url);
+    return { url, fileName, nativeWidth: w || undefined, nativeHeight: h || undefined };
+  }
+
   if (
-    mimeType.startsWith("image/") ||
-    mimeType.startsWith("video/") ||
     mimeType.startsWith("audio/") ||
-    mimeType === "application/pdf" ||
-    mimeType === "image/svg+xml"
+    mimeType === "application/pdf"
   ) {
     return { url: URL.createObjectURL(file), fileName };
   }

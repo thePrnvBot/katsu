@@ -92,14 +92,16 @@ export default function App() {
 
   const handleFileOpen = async (files: File[]) => {
     for (const file of files) {
-      const { url, fileName } = await createFilePreview(file);
+      const { url, fileName, nativeWidth, nativeHeight } = await createFilePreview(file);
       const newWindowId = crypto.randomUUID();
+      const w = nativeWidth ? Math.min(nativeWidth, grid.cellWidth) : 700;
+      const h = nativeHeight ? Math.min(nativeHeight, grid.cellHeight) : 500;
       addWindow({
         id: newWindowId,
-        x: currentCell.x * grid.cellWidth + 100 + Math.random() * 50,
-        y: currentCell.y * grid.cellHeight + 100 + Math.random() * 50,
-        w: 700,
-        h: 500,
+        x: currentCell.x * grid.cellWidth + (grid.cellWidth - w) / 2,
+        y: currentCell.y * grid.cellHeight + (grid.cellHeight - h) / 2,
+        w,
+        h,
         url,
         fileName,
       });
