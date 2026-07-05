@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { resolveLayout, type WindowLayout } from "../utils/windowLayouts";
+import { revokeBlobUrl } from "../utils/filePreview";
 
 export type Bounds = { x: number; y: number; w: number; h: number };
 
@@ -11,6 +12,7 @@ type Window = {
   h: number;
   z?: number;
   url: string;
+  fileName?: string;
   maximized?: boolean;
   prevBounds?: Bounds;
 };
@@ -161,10 +163,14 @@ export const useStore = create<State>((set, get) => ({
     }),
 
   removeWindow: (id: string) =>
-    set((s) => ({
-      windows: s.windows.filter((w) => w.id !== id),
-      activeWindowId: s.activeWindowId === id ? null : s.activeWindowId,
-    })),
+    set((s) => {
+      const win = s.windows.find((w) => w.id === id);
+      if (win) revokeBlobUrl(win.url);
+      return {
+        windows: s.windows.filter((w) => w.id !== id),
+        activeWindowId: s.activeWindowId === id ? null : s.activeWindowId,
+      };
+    }),
 
   setWindowLayout: (id, layout) => {
     const grid = get().grid;
