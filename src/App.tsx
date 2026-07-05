@@ -5,6 +5,7 @@ import { Window } from "./components/window";
 import { Minimap } from "./components/minimap";
 import { SearchBar } from "./components/searchbar";
 import { CommandMenu } from "./components/kbar/CommandMenu";
+import { createFilePreview } from "./utils/filePreview";
 
 export default function App() {
   const moveCell = useStore((s) => s.moveCell);
@@ -53,9 +54,19 @@ export default function App() {
 
   const normalizeUrl = (value: string) => {
     if (!value) return null;
-    if (value.startsWith("http://") || value.startsWith("https://")) {
+
+    if (value.startsWith("file://")) {
       return value;
     }
+
+    if (value.startsWith("http://")) {
+      return `https://${value.slice("http://".length)}`;
+    }
+
+    if (value.startsWith("https://")) {
+      return value;
+    }
+
     return `https://${value}`;
   };
 
@@ -79,6 +90,23 @@ export default function App() {
     setUrlField("");
   };
 
+  const handleFileOpen = async (files: File[]) => {
+    for (const file of files) {
+      const { url, fileName } = await createFilePreview(file);
+      const newWindowId = crypto.randomUUID();
+      addWindow({
+        id: newWindowId,
+        x: currentCell.x * grid.cellWidth + 100 + Math.random() * 50,
+        y: currentCell.y * grid.cellHeight + 100 + Math.random() * 50,
+        w: 700,
+        h: 500,
+        url,
+        fileName,
+      });
+      setActiveWindow(newWindowId);
+    }
+  };
+
   return (
     <div className="fixed inset-0 overflow-hidden">
       <CommandMenu />
@@ -86,8 +114,9 @@ export default function App() {
         url={urlField}
         openSite={openSite}
         handleChange={setUrlField}
+        onFileSelect={handleFileOpen}
       />
-      <World>
+      <World onFileDrop={handleFileOpen}>
         {windows.map((w) => (
           <Window key={w.id} windowId={w.id} />
         ))}

@@ -1,14 +1,54 @@
+import { useCallback, useState } from "react";
 import { useStore } from "../store/useStore";
 
-export function World({ children }: { children: React.ReactNode }) {
+interface WorldProps {
+  children: React.ReactNode;
+  onFileDrop: (files: File[]) => void;
+}
+
+export function World({ children, onFileDrop }: WorldProps) {
   const camera = useStore((s) => s.camera);
   const grid = useStore((s) => s.grid);
+  const [dragOver, setDragOver] = useState(false);
 
   const worldW = grid.cols * grid.cellWidth;
   const worldH = grid.rows * grid.cellHeight;
 
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+    setDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    if (e.currentTarget === e.target) setDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragOver(false);
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) onFileDrop(files);
+    },
+    [onFileDrop],
+  );
+
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[#0a0a0a]">
+    <div
+      className="fixed inset-0 overflow-hidden bg-[#0a0a0a]"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* drop overlay */}
+      {dragOver && (
+        <div className="pointer-events-none fixed inset-0 z-9998 flex items-center justify-center">
+          <div className="rounded-2xl border-2 border-dashed border-white/30 bg-black/60 px-12 py-8 text-white/70 backdrop-blur-sm">
+            Drop files to open
+          </div>
+        </div>
+      )}
       {/* world container */}
       <div
         className="absolute left-0 top-0"

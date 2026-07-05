@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileUp } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../lib/utils";
 
@@ -8,12 +8,14 @@ interface SearchBarProps {
   url: string;
   handleChange: (value: string) => void;
   openSite: () => void;
+  onFileSelect: (files: File[]) => void;
 }
 
-export function SearchBar({ url, handleChange, openSite }: SearchBarProps) {
+export function SearchBar({ url, handleChange, openSite, onFileSelect }: SearchBarProps) {
   const [hidden, setHidden] = useState(false);
   const [focused, setFocused] = useState(false);
   const timer = useRef<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const startHideTimer = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
@@ -36,6 +38,12 @@ export function SearchBar({ url, handleChange, openSite }: SearchBarProps) {
   }, [startHideTimer]);
 
   const visible = !(hidden && !focused);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length > 0) onFileSelect(files);
+    e.target.value = "";
+  };
 
   return (
     <div className="fixed left-1/2 top-0 z-9999 -translate-x-1/2">
@@ -71,6 +79,25 @@ export function SearchBar({ url, handleChange, openSite }: SearchBarProps) {
           }}
           className="h-8 w-65 rounded-full bg-[#333] px-4 text-sm text-[#eee] outline-none focus:ring-2 focus:ring-white/25"
         />
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={handleFileChange}
+        />
+
+        <button
+          onClick={() => {
+            fileInputRef.current?.click();
+            show();
+          }}
+          className="size-8 flex items-center justify-center rounded-full bg-[#444] transition hover:bg-[#555]"
+          title="Open local file"
+        >
+          <FileUp className="size-4" />
+        </button>
 
         <button
           onClick={() => {
