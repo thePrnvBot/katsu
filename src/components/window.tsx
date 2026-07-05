@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { Rnd } from "react-rnd";
 import { useStore } from "../store/useStore";
 import { Maximize, X } from "lucide-react";
+import { revokeBlobUrl } from "../utils/filePreview";
 
 export function Window({ windowId }: { windowId: string }) {
   const win = useStore((s) => s.windows.find((w) => w.id === windowId));
@@ -13,9 +15,17 @@ export function Window({ windowId }: { windowId: string }) {
   const bringToFront = useStore((s) => s.bringToFront);
   const removeWindow = useStore((s) => s.removeWindow);
 
+  useEffect(() => {
+    return () => {
+      const w = useStore.getState().windows.find((x) => x.id === windowId);
+      if (w) revokeBlobUrl(w.url);
+    };
+  }, [windowId]);
+
   if (!win) return null;
 
   const isActive = activeWindowId === win.id;
+  const displayName = win.fileName || win.url;
 
   return (
     <Rnd
@@ -63,7 +73,7 @@ export function Window({ windowId }: { windowId: string }) {
         onDoubleClick={() => centerOnWindow(win.id)}
       >
         <span className="w-10 shrink-0 opacity-50">{win.id.slice(0, 4)}</span>
-        <span className="truncate text-center text-sm">{win.url}</span>
+        <span className="truncate text-center text-sm">{displayName}</span>
 
         <div className="flex shrink-0 items-center gap-0.5">
           <button

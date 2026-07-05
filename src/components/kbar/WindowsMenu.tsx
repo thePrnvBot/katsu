@@ -21,11 +21,11 @@ export function WindowsMenu({ closeAndResetMenu }: SubMenuProps) {
       {windows.map((w) => (
         <Command.Item
           key={w.id}
-          value={`${w.url} ${w.id}`}
+          value={`${w.fileName ?? w.url} ${w.id}`}
           onSelect={() => goToWindow(w.id)}
           className="flex cursor-pointer items-center rounded-lg px-3 py-2 text-sm text-[#eee] outline-none data-[selected=true]:bg-[#333]"
         >
-          {w.url}
+          {w.fileName ?? w.url}
         </Command.Item>
       ))}
     </>
